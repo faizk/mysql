@@ -90,15 +90,31 @@ if platform_family?('windows')
   end
 end
 
-node['mysql']['server']['packages'].each do |package_name|
+# Download package files if necessary
+unless platform_family?(%w{mac_os_x windows})
+  unless node['mysql']['server']['package_files'].size == node['mysql']['server']['package_urls'].size
+    Chef::Log.warn "There should be a node['mysql']['server']['package_urls'] entry for each ['mysql']['server']['package_files'] entry"
+  end
+  node['mysql']['server']['package_files'].each_with_index do |filename,i|
+    remote_file File.join(node['mysql']['server']['package_dir'], filename) do
+      source node['mysql']['server']['package_urls'][i] || nil
+      action :create_if_missing
+    end
+  end
+end
+
+node['mysql']['server']['packages'].each_with_index do |package_name,i|
   package package_name do
+    if node['mysql']['server']['package_files'][i]
+      source File.join(node['mysql']['server']['package_dir'],
+                       node['mysql']['server']['package_files'][i] )
+    end
     action :install
     notifies :start, "service[mysql]", :immediately
   end
 end
 
 unless platform_family?(%w{mac_os_x})
-
   [File.dirname(node['mysql']['pid_file']),
     File.dirname(node['mysql']['tunable']['slow_query_log']),
     node['mysql']['confd_dir'],

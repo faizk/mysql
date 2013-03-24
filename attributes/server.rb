@@ -135,6 +135,15 @@ if attribute?('ec2')
   default['mysql']['ebs_vol_size'] = 50
 end
 
+unless platform_family? %w{mac_os_x windows}
+  # these are parallel arrays of packages and their source
+  # in case you want to download packages from a remote location
+  # (such as mysql.com) instead of using a repository
+  default['mysql']['server']['package_files'] = [] 
+  default['mysql']['server']['package_urls'] = [] 
+  default['mysql']['server']['package_dir'] = "/usr/local/src"
+end
+
 default['mysql']['reload_action'] = "restart" # or "reload" or "none"
 
 default['mysql']['use_upstart'] = node['platform'] == "ubuntu" && node['platform_version'].to_f >= 10.04
