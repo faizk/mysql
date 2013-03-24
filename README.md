@@ -57,6 +57,17 @@ platform and version.
 * `node['mysql']['server']['packages']` - An array of package names
   that should be installed on "server" systems. This can be modified,
   e.g., to specify packages for Percona.
+* `node['mysql']['server']['package_files']` and `node['mysql']['server']['package_urls']` -
+  Parallel arrays for installing packages from a remote source
+  instead of a repository.  `node['mysql']['server']['package_dir']` is 
+  used as a location to download the packages to.  For example, to install 
+  RPMs for MySQL 5.6:
+
+  ```ruby
+  default['mysql']['server']['packages']      = ['MySQL-server'],
+  default['mysql']['server']['package_files'] = ['http://cdn.mysql.com/Downloads/MySQL-5.6/MySQL-server-5.6.10-1.el6.i686.rpm']
+  default['mysql']['server']['package_files'] = ['MySQL-server-5.6.10-1.el6.i686.rpm']
+  ```
 
 * `node['mysql']['auto-increment-increment']` -
   auto-increment-increment value in my.cnf
