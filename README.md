@@ -64,13 +64,11 @@ platform and version.
   RPMs for MySQL 5.6:
 
   ```json
-  { 
-    "mysql": {
-      "server": {
-        "packages":       "MySQL-server",
-        "package_urls":   ["http://cdn.mysql.com/Downloads/MySQL-5.6/MySQL-server-5.6.10-1.el6.i686.rpm"],
-        "package_files":  ["MySQL-server-5.6.10-1.el6.i686.rpm"]
-      }
+  "mysql": {
+    "server": {
+      "packages":       "MySQL-server",
+      "package_urls":   ["http://cdn.mysql.com/Downloads/MySQL-5.6/MySQL-server-5.6.10-1.el6.i686.rpm"],
+      "package_files":  ["MySQL-server-5.6.10-1.el6.i686.rpm"]
     }
   }
   ```
