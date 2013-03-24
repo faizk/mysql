@@ -63,10 +63,17 @@ platform and version.
   used as a location to download the packages to.  For example, to install 
   RPMs for MySQL 5.6:
 
-  ```ruby
-  default['mysql']['server']['packages']      = ['MySQL-server'],
-  default['mysql']['server']['package_files'] = ['http://cdn.mysql.com/Downloads/MySQL-5.6/MySQL-server-5.6.10-1.el6.i686.rpm']
-  default['mysql']['server']['package_files'] = ['MySQL-server-5.6.10-1.el6.i686.rpm']
+  ```json
+  { 
+    "mysql": {
+      "server": {
+        "packages":       "MySQL-server",
+        "package_urls":   ["http://cdn.mysql.com/Downloads/MySQL-5.6/MySQL-server-5.6.10-1.el6.i686.rpm"],
+        "package_files":  ["MySQL-server-5.6.10-1.el6.i686.rpm"]
+
+      }
+    }
+  }
   ```
 
 * `node['mysql']['auto-increment-increment']` -
