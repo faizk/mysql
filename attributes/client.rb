@@ -50,3 +50,12 @@ else
   default['mysql']['client']['packages'] = %w{mysql-client libmysqlclient-dev}
 end
 
+unless platform_family? %w{mac_os_x windows}
+  # these are parallel arrays of packages and their source
+  # in case you want to download packages from a remote location
+  # (such as mysql.com) instead of using a repository
+  default['mysql']['client']['package_files'] = []
+  default['mysql']['client']['package_urls']  = []
+  default['mysql']['client']['package_dir']   = "/usr/local/src"
+end
+

@@ -58,7 +58,7 @@ platform and version.
   that should be installed on "server" systems. This can be modified,
   e.g., to specify packages for Percona.
 * `node['mysql']['server']['package_files']` and `node['mysql']['server']['package_urls']` -
-  Parallel arrays for installing packages from a remote source
+  Parallel arrays to `node['mysql']['server']['packages']` for installing packages from a remote source
   instead of a repository.  `node['mysql']['server']['package_dir']` is 
   used as a location to download the packages to.  For example, to install 
   RPMs for MySQL 5.6:
@@ -68,8 +68,8 @@ platform and version.
     "mysql": {
       "server": {
         "packages":       "MySQL-server",
-        "package_urls":   ["http://cdn.mysql.com/Downloads/MySQL-5.6/MySQL-server-5.6.10-1.el6.i686.rpm"],
-        "package_files":  ["MySQL-server-5.6.10-1.el6.i686.rpm"]
+        "package_urls":   ["http://cdn.mysql.com/Downloads/MySQL-5.6/MySQL-server-5.6.10-1.el6.x86_64.rpm"],
+        "package_files":  ["MySQL-server-5.6.10-1.el6.x86_64.rpm"]
       }
     }
   }
