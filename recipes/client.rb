@@ -42,8 +42,25 @@ when "mac_os_x"
   include_recipe 'homebrew'
 end
 
-node['mysql']['client']['packages'].each do |mysql_pack|
+# Download package files if necessary
+unless platform_family?(%w{mac_os_x windows})
+  unless node['mysql']['client']['package_files'].size == node['mysql']['client']['package_urls'].size
+    Chef::Log.warn "There should be a node['mysql']['client']['package_urls'] entry for each ['mysql']['client']['package_files'] entry"
+  end
+  node['mysql']['client']['package_files'].each_with_index do |filename,i|
+    remote_file File.join(node['mysql']['client']['package_dir'], filename) do
+      source node['mysql']['client']['package_urls'][i] || nil
+      action :create_if_missing
+    end
+  end
+end
+
+node['mysql']['client']['packages'].each_with_index do |mysql_pack,i|
   package mysql_pack do
+    if node['mysql']['client']['package_files'][i]
+      source File.join(node['mysql']['client']['package_dir'],
+                       node['mysql']['client']['package_files'][i] )
+    end
     action :install
   end
 end
