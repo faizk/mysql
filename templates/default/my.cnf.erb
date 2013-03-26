@@ -101,7 +101,11 @@ wait_timeout            = <%= node['mysql']['tunable']['wait_timeout'] %>
 net_read_timeout        = <%= node['mysql']['tunable']['net_read_timeout'] %>
 net_write_timeout       = <%= node['mysql']['tunable']['net_write_timeout'] %>
 back_log                = <%= node['mysql']['tunable']['back_log'] %>
+<%- if node['mysql']['tunable']['table_cache'] && node['mysql']['version'].to_f < 5.5 %>
+# table_cache is deprecated as of 5.1.3 and removed in 5.5
+# http://dev.mysql.com/doc/refman/5.1/en/server-system-variables.html#sysvar_table_cache
 table_cache             = <%= node['mysql']['tunable']['table_cache'] %>
+<%- end %>
 <%- if node['mysql']['tunable']['table_open_cache'] %>
 table_open_cache        = <%= node['mysql']['tunable']['table_open_cache'] %>
 <%- end %>
