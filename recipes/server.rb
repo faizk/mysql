@@ -73,6 +73,25 @@ if platform_family?(%w{debian})
 
 end
 
+unless platform_family?(%w{mac_os_x})
+  skip_federated = case node['platform']
+                   when 'fedora', 'ubuntu', 'amazon'
+                     true
+                   when 'centos', 'redhat', 'scientific'
+                     node['platform_version'].to_f < 6.0
+                   else
+                     false
+                   end
+
+  template "#{node['mysql']['conf_dir']}/my.cnf" do
+    source "my.cnf.erb"
+    owner "root" unless platform? 'windows'
+    group node['mysql']['root_group'] unless platform? 'windows'
+    mode "0644"
+    variables :skip_federated => skip_federated
+  end
+end
+
 if platform_family?('windows')
   package_file = node['mysql']['package_file']
 
@@ -142,14 +161,6 @@ unless platform_family?(%w{mac_os_x})
     end
   end
 
-  skip_federated = case node['platform']
-                   when 'fedora', 'ubuntu', 'amazon'
-                     true
-                   when 'centos', 'redhat', 'scientific'
-                     node['platform_version'].to_f < 6.0
-                   else
-                     false
-                   end
 end
 
 # Homebrew has its own way to do databases
@@ -229,19 +240,14 @@ unless platform_family?(%w{mac_os_x})
   end
 
   template "#{node['mysql']['conf_dir']}/my.cnf" do
-    source "my.cnf.erb"
-    owner "root" unless platform? 'windows'
-    group node['mysql']['root_group'] unless platform? 'windows'
-    mode "0644"
     case node['mysql']['reload_action']
     when 'restart'
-      notifies :restart, "service[mysql]", :immediately
+      notifies :restart, "service[mysql]", :delayed
     when 'reload'
-      notifies :reload, "service[mysql]", :immediately
+      notifies :reload, "service[mysql]", :delayed
     else
       Chef::Log.info "my.cnf updated but mysql.reload_action is #{node['mysql']['reload_action']}. No action taken."
     end
-    variables :skip_federated => skip_federated
   end
 
   service "mysql" do
