@@ -125,9 +125,10 @@ unless platform_family? %w{mac_os_x windows}
   # these are parallel arrays of packages and their source
   # in case you want to download packages from a remote location
   # (such as mysql.com) instead of using a repository
-  default['mysql']['server']['package_files'] = [] 
-  default['mysql']['server']['package_urls'] = [] 
-  default['mysql']['server']['package_dir'] = "/usr/local/src"
+  default['mysql']['server']['package_files'] = []
+  default['mysql']['server']['package_urls']  = []
+  default['mysql']['server']['package_dir']   = "/usr/local/src"
+  default['mysql']['secret_file']             = '/root/.mysql_secret'
 end
 
 default['mysql']['reload_action'] = "restart" # or "reload" or "none"
