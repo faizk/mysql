@@ -179,10 +179,23 @@ end
 
 # set the root password for situations that don't support pre-seeding.
 # (eg. platforms other than debian/ubuntu & drop-in mysql replacements)
+mysql_secret_command = <<-EOF
+if [ -f "#{node['mysql']['secret_file']}" ]; then
+  INITIAL_PASS_PARAM="-p\"$(/bin/grep random #{node['mysql']['secret_file']} | /usr/bin/tail -1 | /bin/awk '{print $NF}')\""
+  echo $INITIAL_PASS_PARAM > /tmp/foo.txt
+fi
+EOF
+
 execute "assign-root-password" do
-  command "\"#{node['mysql']['mysqladmin_bin']}\" -u root password \"#{node['mysql']['server_root_password']}\""
+  command <<-EOF
+#{mysql_secret_command}
+"#{node['mysql']['mysqladmin_bin']}" -u root ${INITIAL_PASS_PARAM} password "#{node['mysql']['server_root_password']}"
+EOF
   action :run
-  only_if "\"#{node['mysql']['mysql_bin']}\" -u root -e 'show databases;'"
+  not_if <<-EOF
+#{mysql_secret_command}
+"#{node['mysql']['mysql_bin']}" -u root -p"#{node['mysql']['server_root_password']}" -e 'SELECT 1'
+EOF
 end
 
 unless platform_family?(%w{mac_os_x})
