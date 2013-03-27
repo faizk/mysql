@@ -185,8 +185,12 @@ default['mysql']['tunable']['log_bin_trust_function_creators'] = false
 default['mysql']['tunable']['relay_log']                       = nil
 default['mysql']['tunable']['relay_log_index']                 = nil
 default['mysql']['tunable']['log_slave_updates']               = false
+default['mysql']['tunable']['slave_net_timeout']               = nil
 
 default['mysql']['tunable']['sync_binlog']                     = 0
+default['mysql']['tunable']['sync_master_info']                = nil
+default['mysql']['tunable']['sync_relay_log']                  = nil
+default['mysql']['tunable']['sync_relay_log_info']             = nil
 default['mysql']['tunable']['skip_slave_start']                = false
 default['mysql']['tunable']['read_only']                       = false
 
@@ -195,6 +199,8 @@ default['mysql']['tunable']['log_warnings']                    = false
 default['mysql']['tunable']['log_queries_not_using_index']     = true
 default['mysql']['tunable']['log_bin_trust_function_creators'] = false
 
+default['mysql']['tunable']['innodb']                          = nil
+default['mysql']['tunable']['innodb_strict_mode']              = nil
 default['mysql']['tunable']['innodb_log_file_size']            = "5M"
 default['mysql']['tunable']['innodb_buffer_pool_size']         = "128M"
 default['mysql']['tunable']['innodb_buffer_pool_instances']    = "4"
@@ -223,27 +229,33 @@ default['mysql']['tunable']['skip-innodb-doublewrite']         = false
 
 default['mysql']['tunable']['transaction-isolation'] = nil
 
+default['mysql']['tunable']['query_cache_type']     = nil
 default['mysql']['tunable']['query_cache_limit']    = "1M"
 default['mysql']['tunable']['query_cache_size']     = "16M"
 
 default['mysql']['tunable']['log_slow_queries']     = "/var/log/mysql/slow.log"
-default['mysql']['tunable']['slow_query_log']       = node['mysql']['tunable']['log_slow_queries'] # log_slow_queries is deprecated
+default['mysql']['tunable']['slow_query_log']       = 1
+default['mysql']['tunable']['slow_query_log_file']  = node['mysql']['tunable']['log_slow_queries'] # log_slow_queries is deprecated
                                                                                                    # in favor of slow_query_log
 default['mysql']['tunable']['long_query_time']      = 2
 
 default['mysql']['tunable']['expire_logs_days']     = 10
 default['mysql']['tunable']['max_binlog_size']      = "100M"
 default['mysql']['tunable']['binlog_cache_size']    = "32K"
+default['mysql']['tunable']['default_storage_engine'] = nil
+default['mysql']['tunable']['sysdate_is_now'] = nil
 
 default['mysql']['tmpdir'] = ["/tmp"]
 
 default['mysql']['log_dir'] = node['mysql']['data_dir']
 default['mysql']['log_files_in_group'] = false
 default['mysql']['innodb_status_file'] = false
+default['mysql']['default_storage_engine'] = nil
 
 unless node['platform_family'] && node['platform_version'].to_i < 6
   # older RHEL platforms don't support these options
   default['mysql']['tunable']['event_scheduler']  = 0
+  default['mysql']['tunable']['table_definition_cache'] = nil
   default['mysql']['tunable']['table_open_cache'] = "128"
   default['mysql']['tunable']['binlog_format']    = "statement" if node['mysql']['tunable']['log_bin']
 end
