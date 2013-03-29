@@ -174,7 +174,15 @@ else
   execute 'mysql-install-db' do
     command "mysql_install_db --defaults-file #{node['mysql']['conf_dir']}/my.cnf"
     action :run
+    # if the recipe explicitly ran mysql_install_db, then 
+    # get rid of the .mysql_secret file because it's now meaningless
+    notifies :run, "execute[rm-mysql-secret]", :immediately
     not_if { File.exists?(node['mysql']['data_dir'] + '/mysql/user.frm') }
+  end
+
+  execute "rm-mysql-secret"
+    command "rm -f #{node['mysql']['secret_file']}"
+    action :nothing
   end
 
   service "mysql" do
