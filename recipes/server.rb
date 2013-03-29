@@ -129,7 +129,6 @@ node['mysql']['server']['packages'].each_with_index do |package_name,i|
                        node['mysql']['server']['package_files'][i] )
     end
     action :install
-    notifies :start, "service[mysql]", :immediately
   end
 end
 
@@ -193,6 +192,14 @@ else
     supports :status => true, :restart => true, :reload => true
     action :enable
   end
+end
+
+ruby_block "start_mysql" do
+  block do
+    1=1
+  end
+  action :create
+  notifies :start, "service[mysql]", :immediately
 end
 
 # set the root password for situations that don't support pre-seeding.
