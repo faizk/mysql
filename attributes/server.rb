@@ -131,6 +131,7 @@ unless platform_family? %w{mac_os_x windows}
   default['mysql']['secret_file']             = '/root/.mysql_secret'
 end
 
+default['mysql']['random_initial_password']        = false
 default['mysql']['reload_action'] = "restart" # or "reload" or "none"
 
 default['mysql']['use_upstart'] = node['platform'] == "ubuntu" && node['platform_version'].to_f >= 10.04

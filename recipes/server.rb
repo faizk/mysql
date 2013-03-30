@@ -168,20 +168,28 @@ if platform_family?(%w{mac_os_x})
     environment('TMPDIR' => nil)
     action :run
     creates "#{node['mysql']['data_dir']}/mysql"
+    notifies :start, "service[mysql]", :immediately
   end
 else
   execute 'mysql-install-db' do
-    command "mysql_install_db --defaults-file #{node['mysql']['conf_dir']}/my.cnf"
+    random_param = ""
+    if node['mysql']['random_initial_password'] 
+      random_param = "--random-password"
+    end
+    command "mysql_install_db --defaults-file #{node['mysql']['conf_dir']}/my.cnf #{random_param}"
     action :run
-    # if the recipe explicitly ran mysql_install_db, then 
-    # get rid of the .mysql_secret file because it's now meaningless
-    notifies :run, "execute[rm-mysql-secret]", :immediately
+    retries 12
+    retry_delay 10
     not_if { File.exists?(node['mysql']['data_dir'] + '/mysql/user.frm') }
+    notifies :start, "service[mysql]", :immediately
   end
 
-  execute "rm-mysql-secret" do
-    command "rm -f #{node['mysql']['secret_file']}"
-    action :nothing
+  ruby_block "start_mysql" do
+    block do
+      1  
+    end
+    action :create
+    notifies :start, "service[mysql]", :immediately
   end
 
   service "mysql" do
@@ -192,15 +200,9 @@ else
     supports :status => true, :restart => true, :reload => true
     action :enable
   end
+
 end
 
-ruby_block "start_mysql" do
-  block do
-    1=1
-  end
-  action :create
-  notifies :start, "service[mysql]", :immediately
-end
 
 # set the root password for situations that don't support pre-seeding.
 # (eg. platforms other than debian/ubuntu & drop-in mysql replacements)
